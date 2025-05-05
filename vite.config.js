@@ -10,5 +10,5 @@ export default defineConfig({
   theme: {
     extend: {},
   },
-  plugins: [react()],
+  plugins: [react(), tailwindcss()],
 })

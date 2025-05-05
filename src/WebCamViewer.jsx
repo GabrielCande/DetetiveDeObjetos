@@ -21,7 +21,7 @@ const WebcamViewer = forwardRef((props, ref) => {
         }
       } catch (err) {
         setError(err);
-        console.error("Error accessing webcam:", err);
+        console.error("Error ao acessar webcam:", err);
       }
     };
 
@@ -35,19 +35,18 @@ const WebcamViewer = forwardRef((props, ref) => {
   }, []);
 
   return (
-    <div className="webcam-container bg-gray-900 rounded-lg shadow-md relative">
-      <video 
+    <div className="">
+      <video className="webcam-container bg-gray-900 rounded-lg shadow-[4px_4px_0_0_rgba(0,0,0,0.3)] transition-all duration-300 hover:translate-y-[-4px] hover:shadow-[6px_6px_0_0_rgba(0,0,0,0.4)] border-4 border-[#B66E36]"
         ref={(node) => {
           videoRef.current = node;
           if (ref) ref.current = node;
         }}
-        className="w-full h-full object-cover"
         autoPlay
         playsInline
         muted
       />
       {error && (
-        <div className="text-white absolute inset-0 flex items-center justify-center bg-red-500/50">
+        <div className="">
           <p>Erro na câmera: {error.message}</p>
         </div>
       )}

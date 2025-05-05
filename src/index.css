@@ -6,8 +6,12 @@
   font-weight: 400;
 
   color-scheme: light dark;
-  color: rgba(0, 0, 0, 0.87);
-  background-color: #805c2d;
+  background-image: url('/src/assets/background.png');
+  background-size: auto 100%;
+  background-position: left center;
+  background-repeat: repeat;
+  background-attachment: fixed;
+  animation: moveBackground 40s linear infinite;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -15,13 +19,30 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
+.textPad{
+  color: #3B2A1D;
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
-a:hover {
-  color: #535bf2;
+
+@keyframes moveBackground {
+  0%, 100% {
+    background-position: left center;
+  }
+  50% {
+    background-position: right center;
+  }
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(1px);
+  background: rgba(66, 66, 66, 0.3); 
+  z-index: -1;
 }
 
 body {
@@ -29,6 +50,8 @@ body {
   display: flex;
   min-width: 320px;
   min-height: 100vh;
+  cursor: default;
+  overflow: hidden;
 }
 
 nav.fixed-header {
@@ -56,22 +79,29 @@ h1 {
   line-height: 1.1;
 }
 
-button {
+.MuteB {
+  padding: 0.6em 1.2em;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.button {
   border-radius: 8px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
   cursor: pointer;
   transition: border-color 0.25s;
 }
-button:hover {
+
+.button:hover {
   border-color: #646cff;
 }
-button:focus,
-button:focus-visible {
+
+.button:focus,
+.button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
@@ -126,6 +156,8 @@ button:focus-visible {
   position: relative;
   width: 100%;
   height: 100%;
+  max-width: 800px;
+  max-height: 500px;
 }
 
 html, body, #root {
@@ -137,6 +169,15 @@ html, body, #root {
   grid-template-columns: 1fr 2fr; 
   gap: 10px; 
 }
+
+.grid-containerT {
+  display: grid;
+  grid-template-columns: 1fr 1fr; 
+  gap: 0px; 
+}
 /* Fim das coisas da Camera */
 
-
+@keyframes pulse-border {
+  0% { opacity: 0; left: -100%; }
+  100% { opacity: 1; left: 100%; }
+}
