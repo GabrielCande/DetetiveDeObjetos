@@ -4,7 +4,11 @@ import { getShuffledMissions } from "./missions";
 import AudioPlayer from "./AudioPlayer";
 import "./App.css";
 
-function App() {
+/** Código núcleo da aplicação, reponsável pela geração das interfaces e componentes*/
+
+
+function App() { /** Interface de apresentação */
+  /** Variáveis de controle de interface */
   const [showStartScreen, setShowStartScreen] = useState(true);
   const [shouldRenderStartScreen, setShouldRenderStartScreen] = useState(true);
   const [showMainApp, setShowMainApp] = useState(false);
@@ -15,38 +19,39 @@ function App() {
       setShouldRenderStartScreen(false);
       setShowMainApp(true);
     }, 500);
-  };
+  }; /** Função para fazer o controle das interfaces, escondendo a de apresentação para mostrar a principal */
 
-  return (
+  return ( /** Renderiza a interface de apresentação */
     <div className="min-h-screen flex flex-col relative overflow-hidden">
+      {/** Checa a variável booleana, para controle de interfaces */}
       {shouldRenderStartScreen && (
         <div
-          style={{ display: showStartScreen ? "flex" : "none" }}
+          style={{ display: showStartScreen ? "flex" : "none" }} /** Alterna entre 'flex' e 'none' para garantir que não cubra o espaço da webcam da interface principal */
           className="fixed inset-0 flex flex-col justify-center items-center h-screen bg-[#b66e363a] backdrop-blur-md rounded-xl text-center p-10 z-50 transition-opacity duration-500"
         >
           <h1 className="text-4xl font-bold mb-6 text-[#3B2A1D] [text-shadow:_3px_3px_0_rgba(0,0,0,0.3)] transition-all duration-300 hover:translate-y-[-6px]">
             Bem-vindo ao Detetive de Objetos!
-          </h1>
+          </h1> {/** Titulo do jogo */}
           <div className="z-50 flex items-center gap-2">
             <img
-              src={"/src/assets/logo.png"}
+              src={"/src/assets/logo.png"} /** Logo do Site */
               className="w-50 h-50 object-contain transition-all duration-300 hover:translate-y-[-6px]"
             />
             <p className="text-xl mb-8 font-bold text-[#3B2A1D] [text-shadow:_2px_2px_0_rgba(0,0,0,0.3)] transition-all duration-300 hover:translate-y-[-6px] max-w-120 mt-5">
             Detetive de Objetos é um jogo interativo que usa a câmera do seu dispositivo e inteligência artificial para desafiar você a encontrar objetos no seu ambiente. A cada rodada, um item será exibido na tela, e sua missão é localizá-lo com a câmera até que o sistema o reconheça. Com atenção e agilidade, você avançará pelas missões enquanto o modelo de IA analisa as imagens em tempo real para identificar corretamente os objetos.
-            </p>
+            </p> {/** Descrição do jogo */}
           </div>
           <button
             onClick={handleStart}
             className="button flex items-center gap-2 font-bold transition-all duration-300 hover:translate-y-[-6px] text-[#eba118] [text-shadow:_2px_2px_0_rgba(0,0,0,0.3)]"
-          >
+          > {/** Botão para iniciar o jogo */}
             Começar o Jogo!
-            <svg
+            <svg 
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               width="2em"
               height="2em"
-            >
+            > {/** Icone SVG do foguete */}
               <g
                 fill="none"
                 stroke="currentColor"
@@ -58,40 +63,41 @@ function App() {
                 <path d="M6.6 11.923c5.073-9.454 11.39-9.563 13.913-8.436c1.127 2.524 1.018 8.84-8.436 13.913c-.098-.564-.643-2.04-2.04-3.437s-2.873-1.942-3.437-2.04" />
                 <path d="M13.35 16.95c1.839.9 2.035 2.514 2.29 4.05c0 0 3.85-2.846 1.387-6.75M7.05 10.727C6.15 8.888 4.536 8.692 3 8.437c0 0 2.847-3.85 6.75-1.387m-3.732 7.862c-.512.511-1.382 1.996-.768 3.838c1.843.614 3.327-.256 3.84-.767M17.3 8.45a1.75 1.75 0 1 0-3.5 0a1.75 1.75 0 0 0 3.5 0" />
               </g>
-            </svg>
-          </button>
+            </svg> 
+          </button> 
         </div>
-      )}
-      {showMainApp && <MainApp />}
+      )} {/** Fim do condicional */}
+      {showMainApp && <MainApp />} {/** Renderiza a interface principal do jogo */}
     </div>
   );
 }
 
-function MainApp() {
+
+function MainApp() { /** Interface principal */
+  /** Variáveis de controle de interface */
   const [isScrolled, setIsScrolled] = useState(false);
   const [detectionResult, setDetectionResult] = useState(null);
   const [model, setModel] = useState(null);
-  const [status, setStatus] = useState("Carregando modelo...");
+  const [status, setStatus] = useState("");
   const [missionsList, setMissionsList] = useState([]);
   const [currentMissionIndex, setCurrentMissionIndex] = useState(0);
-
   const webcamRef = useRef(null);
   const detectionLoopId = useRef(null);
 
-  useEffect(() => {
-    const initializeMissions = () => {
+  useEffect(() => { /** Executa ao ser montado para carregar as missões */
+    const initializeMissions = () => { /** Carrega e embaralha as missões */
       const shuffledMissions = getShuffledMissions();
       setMissionsList(shuffledMissions);
       setStatus(
-        shuffledMissions[0] ? "Carregando Modelo..." : "Sem missões disponíveis"
+        shuffledMissions[0] ? "Carregando Jogo..." : "Sem missões disponíveis"
       );
     };
     initializeMissions();
   }, []);
 
-  const currentMission = missionsList[currentMissionIndex];
+  const currentMission = missionsList[currentMissionIndex]; /** Pega a missão atual */
 
-  useEffect(() => {
+  useEffect(() => { /** Executa ao ser montado para carregar o modelo de IA */
     const loadModel = async () => {
       try {
         if (!window.tf || !window.cocoSsd) {
@@ -103,20 +109,21 @@ function MainApp() {
           ]);
         }
 
-        const model = await window.cocoSsd.load();
-        setModel(model);
+        const model = await window.cocoSsd.load(); /** Espera carregar o modelo de IA */
+        setModel(model); /** Atualiza o estado do modelo com o COCO-SSD*/
         setStatus(
           currentMission
             ? `Procure por: ${currentMission.label}`
             : ""
-        );
-      } catch (err) {
+        ); /** Atualiza o status com a missão atual */
+      } catch (err) { /** Controle de erro ao carregar o modelo */
         console.error("Erro ao carregar modelo:", err);
         setStatus("Erro ao carregar o modelo de IA");
       }
     };
 
-    const loadScript = (src) =>
+    {/** Carrega o script do TensorFlow e COCO-SSD de maneira assíncrona */}
+    const loadScript = (src) => 
       new Promise((resolve) => {
         const script = document.createElement("script");
         script.src = src;
@@ -124,59 +131,61 @@ function MainApp() {
         document.head.appendChild(script);
       });
 
-    loadModel();
-  }, [currentMission]);
+    loadModel(); /** Chama a função para carregar o modelo */
+  }, [currentMission]); /** Carrega o modelo de IA quando a missão atual muda */
 
   useEffect(() => {
-    let isActive = true;
+    let isActive = true; /** Variável para controle de execução do loop de detecção */
 
-    const runDetection = async () => {
-      if (!model || !webcamRef.current || !currentMission) return;
+    const runDetection = async () => { /** Executa a detecção de objetos */
+      if (!model || !webcamRef.current || !currentMission) return; /** Verifica se o modelo, a webcam e a missão atual estão disponíveis */
 
-      const videoElement = webcamRef.current;
+      const videoElement = webcamRef.current; /** Pega o elemento da webcam */
 
-      const detectFrame = async () => {
-        if (!isActive) return;
+      /** Função para detectar objetos em cada frame */
+      const detectFrame = async () => { 
+        if (!isActive) return; /** Verifica se a execução está ativa */
 
         try {
           const predictions = await model.detect(videoElement);
           const target = predictions.find(
             (p) => p.class === currentMission.category
-          );
+          ); /** Verifica se a classe detectada é a mesma da missão atual */
 
-          if (target) {
+          if (target) { /** Se a classe for encontrada */
             setDetectionResult({
               confidence: Math.round(target.score * 100),
               mission: currentMission,
             });
             setStatus(`${currentMission.label} encontrado!`);
             cancelAnimationFrame(detectionLoopId.current);
-          } else {
+          } else { /** Se a classe não for encontrada */
             detectionLoopId.current = requestAnimationFrame(detectFrame);
           }
-        } catch (error) {
+        } catch (error) { /** Controle de erro na detecção */
           console.error("Erro na detecção:", error);
           detectionLoopId.current = requestAnimationFrame(detectFrame);
         }
       };
+      /** Inicia o loop de detecção */
+      detectionLoopId.current = requestAnimationFrame(detectFrame); 
+    }; 
 
-      detectionLoopId.current = requestAnimationFrame(detectFrame);
-    };
-
-    if (webcamRef.current?.readyState === HTMLMediaElement.HAVE_ENOUGH_DATA) {
+    /** Verifica se a webcam está pronta para detecção */
+    if (webcamRef.current?.readyState === HTMLMediaElement.HAVE_ENOUGH_DATA) { 
       runDetection();
-    } else {
+    } else { /** Se a webcam não estiver pronta, adiciona um listener para o evento loadeddata */
       webcamRef.current?.addEventListener("loadeddata", runDetection);
     }
 
-    return () => {
-      isActive = false;
+    return () => { /** Limpa o loop de detecção e remove o listener */
+      isActive = false; /** Cancela o loop de detecção */
       cancelAnimationFrame(detectionLoopId.current);
       webcamRef.current?.removeEventListener("loadeddata", runDetection);
-    };
-  }, [model, currentMission]);
+    }; 
+  }, [model, currentMission]); /** Executa a detecção quando o modelo e a missão atual mudam */
 
-  const nextMission = () => {
+  const nextMission = () => { /** Função para avançar para a próxima missão */
     if (currentMissionIndex < missionsList.length - 1) {
       setCurrentMissionIndex((prev) => prev + 1);
       setDetectionResult(null);
@@ -184,26 +193,28 @@ function MainApp() {
       cancelAnimationFrame(detectionLoopId.current);
     }
   };
-
+ 
+  /** Formata o progresso da missão atual */
   const missionProgress =
     missionsList.length > 0
       ? `${currentMissionIndex + 1}/${missionsList.length}`
       : "0/0";
 
+  /** Efeito para adicionar o listener de scroll (sem uso) */
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  return (
+  return ( /** Renderiza a interface principal */
     <div className="min-h-screen flex flex-col relative overflow-hidden">
-      <AudioPlayer />
+      <AudioPlayer /> {/** Componente de áudio para tocar música de fundo */}
       <nav className={`fixed-header ${isScrolled ? "scrolled" : ""}`}>
         <div className="">
           <h1 className="textPad font-bold [text-shadow:_3px_3px_0_rgba(0,0,0,0.4)] applyBlur">
             Detetive de Objetos
-          </h1>
+          </h1> {/** Titulo do jogo */}
         </div>
       </nav>
 
@@ -211,38 +222,42 @@ function MainApp() {
         <div className="grid-container">
           <div className="">
             <div className="">
-              {detectionResult ? (
+              {/** Condicional para controle de acerto */}
+              {detectionResult ? ( 
+                /** Se a detecção for bem-sucedida, exibe o resultado */
                 <div>
                   <p className="animate-pulse duration-200 text-xl font-bold [text-shadow:_3px_3px_0_rgba(0,0,0,0.3)] text-[#a1ee11] mt-30 applyBlur">
                     {detectionResult.mission.label} encontrada(o)!
-                  </p>
+                  </p> {/** Nome do objeto encontrado */}
                   <p className="font-extrabold [text-shadow:_2px_2px_0_rgba(0,0,0,0.3)] text-[#3B2A1D] mb-5 applyBlur">
                     Confiança: {detectionResult.confidence}%
-                  </p>
+                  </p> {/** Confiança da detecção */}
                   {currentMissionIndex < missionsList.length - 1 ? (
+                    /** Botão para avançar para a próxima missão */
                     <button
                       onClick={nextMission}
                       className="text-[#B66E36] font-black button transition-all duration-300 hover:translate-y-[-6px] [text-shadow:_3px_3px_0_rgba(0,0,0,0.3)] applyBlur"
-                    >
+                    > 
                       Próxima Missão →
-                    </button>
+                    </button> 
                   ) : (
                     <p className="animate-bounce duration-300 text-xl font-bold [text-shadow:_2px_2px_0_rgba(0,0,0,0.3)] text-[#ffbb00] mt-10">
                       Prabéns!!! Você Conseguiu Completar Todas as Missões!
-                    </p>
+                    </p> /** Mensagem de conclusão */
                   )}
                 </div>
-              ) : (
+              ) : ( /** Condicional para enquanto a detecção do objeto correto não ocorrer */
                 <div>
-                  {!model ? (
+                  {!model ? ( /** Se o modelo não estiver carregado, exibe a animação de carregamento */
                     <div className="flex flex-col items-center">
+                      {/** Animação de carregamento */}
                       <svg
                         className="animate-spin text-[#3B2A1D] mt-20 applyBlur"
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 24 24"
                         width="6em"
                         height="6em"
-                      >
+                      > 
                         <path
                           fill="currentColor"
                           d="M12 2A10 10 0 1 0 22 12A10 10 0 0 0 12 2Zm0 18a8 8 0 1 1 8-8A8 8 0 0 1 12 20Z"
@@ -264,23 +279,24 @@ function MainApp() {
                       </svg>
                       <p className="text-2xl font-extrabold [text-shadow:_2px_2px_0_rgba(0,0,0,0.4)] text-[#3B2A1D] transition-all duration-300 hover:translate-y-[-4px] mt-10 applyBlur">
                         Carregando Jogo...
-                      </p>
+                      </p> {/** Mensagem de carregamento */}
                     </div>
-                  ) : (
+                  ) : ( /** Se o modelo estiver carregado, exibe a missão atual */
                     <div className="w-full h-full overflow-hidden rounded-lg">
                       <img
                         src={currentMission?.image}
                         className="w-full h-full object-contain transition-all duration-300 hover:translate-y-[-6px] applyBlur"
-                      />
+                      /> {/** Imagem da missão atual */}
                       <p className="text-2xl font-extrabold [text-shadow:_2px_2px_0_rgba(0,0,0,0.4)] text-[#3B2A1D] transition-all duration-300 hover:translate-y-[-4px] mr-10 applyBlur">
                         {status}
-                      </p>
+                      </p> {/** Mensagem de status */}
                     </div>
                   )}
                 </div>
               )}
             </div>
             <div className="fixed bottom-4 left-4 z-50 flex items-center gap-2">
+              {/** Icone do Mapa da missão */}
               <svg
                 className="text-[#ecd1ae] transition-all duration-300 hover:translate-y-[-4px] applyBlur rounded-2xl"
                 xmlns="http://www.w3.org/2000/svg"
@@ -295,17 +311,17 @@ function MainApp() {
               </svg>
               <p className="applyBlur text-xl font-bold [text-shadow:_2px_2px_0_rgba(0,0,0,0.3)] text-[#3B2A1D] transition-all duration-300 hover:translate-y-[-4px] rounded-2xl">
                 Missão {missionProgress}
-              </p>
+              </p> {/** Progresso da missão */}
             </div>
           </div>
 
           <div className="">
-            <WebcamViewer ref={webcamRef} />
+            <WebcamViewer ref={webcamRef} /> {/** Componente da webcam */}
           </div>
         </div>
       </main>
 
-      <footer className="fixed-footer">
+      <footer className="fixed-footer"> {/** Rodapé */}
         <div className="textPad [text-shadow:_2px_2px_0_rgba(0,0,0,0.3)]">
           <p>&copy; {new Date().getFullYear()} Detetive de Objetos</p>
         </div>
