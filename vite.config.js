@@ -8,7 +8,8 @@ export default defineConfig({
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+    },
   },
   plugins: [react(), tailwindcss()],
 })

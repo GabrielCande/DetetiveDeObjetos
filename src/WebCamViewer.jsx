@@ -36,7 +36,7 @@ const WebcamViewer = forwardRef((props, ref) => {
 
   return (
     <div className="">
-      <video className="webcam-container bg-gray-900 rounded-lg shadow-[4px_4px_0_0_rgba(0,0,0,0.3)] transition-all duration-300 hover:translate-y-[-4px] hover:shadow-[6px_6px_0_0_rgba(0,0,0,0.4)] border-4 border-[#B66E36]"
+      <video className="webcam-container bg-gray-900 rounded-lg shadow-[4px_4px_0_0_rgba(0,0,0,0.3)] transition-all duration-300 hover:translate-y-[-4px] hover:shadow-[6px_6px_0_0_rgba(0,0,0,0.4)] border-4 border-[#B66E36] mt-10"
         ref={(node) => {
           videoRef.current = node;
           if (ref) ref.current = node;
